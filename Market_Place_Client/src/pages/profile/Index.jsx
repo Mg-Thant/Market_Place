@@ -7,7 +7,7 @@ import { getProducts } from "../../apicalls/product";
 import Products from "./Products";
 import ManageProduct from "./ManageProduct";
 import General from "./General";
-import { FadeLoader } from "react-spinners";
+import "ldrs/bouncy";
 import { getAllNoti } from "../../apicalls/notification";
 import {
   BellAlertIcon,
@@ -141,13 +141,9 @@ const Index = () => {
   return (
     <>
       {loading ? (
-        <FadeLoader
-          color={"#0000ff"}
-          loading={loading}
-          size={15}
-          speedMultiplier={1}
-          className="mx-auto mt-44"
-        />
+        <div className="mx-auto w-fit m-16">
+          <l-bouncy size="45" speed="1.75" color="blue"></l-bouncy>
+        </div>
       ) : (
         <Tabs
           activeKey={activeTabKey}

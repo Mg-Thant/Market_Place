@@ -2,16 +2,12 @@ import React, { useEffect, useState } from "react";
 import { Checkbox, Col, Form, Input, message, Row, Select } from "antd";
 import TextArea from "antd/es/input/TextArea";
 import { SquaresPlusIcon } from "@heroicons/react/24/solid";
-import { useForm } from "antd/es/form/Form";
-import { BeatLoader } from "react-spinners";
-import { useDispatch, useSelector } from "react-redux";
 
 import {
   getOldDataProduct,
   sellProduct,
   updateProduct,
 } from "../../apicalls/product";
-import { setError, setLoading } from "../../store/slices/userSlice";
 
 const ProductForm = ({
   setActiveTabKey,
@@ -21,11 +17,8 @@ const ProductForm = ({
 }) => {
   const [form] = Form.useForm();
   const [sellerId, setSellerId] = useState(null);
-  const dispatch = useDispatch();
-  const loading = useSelector((state) => state.reducer.user.loading);
 
   const handleOnFinish = async (values) => {
-    dispatch(setLoading(true));
     try {
       let res;
       if (editMode) {
@@ -44,14 +37,11 @@ const ProductForm = ({
         throw new Error(res.message);
       }
     } catch (err) {
-      dispatch(setError(err.message));
       message.error(err.message);
     }
-    dispatch(setLoading(false));
   };
 
   const getOldProduct = async () => {
-    dispatch(setLoading(true));
     const res = await getOldDataProduct(editProductId);
     setSellerId(res.product.seller);
     if (res.isSuccess) {
@@ -64,10 +54,8 @@ const ProductForm = ({
         product_details: res.product.details || [],
       });
     } else {
-      dispatch(setError("Failed to fetch product details"));
       message.error("Failed to fetch product details");
     }
-    dispatch(setLoading(false));
   };
 
   useEffect(() => {
@@ -215,15 +203,8 @@ const ProductForm = ({
             ]}
           />
         </Form.Item>
-        <button className="font-medium text-lg text-center m-4 bg-blue-600 text-white rounded-lg flex items-center justify-center gap-2 w-3/12 py-2 float-right" disabled={loading}>
-          {loading ? (
-            <BeatLoader
-              color={"#ffffff"}
-              loading={loading}
-              size={7}
-              speedMultiplier={1}
-            />
-          ) : !loading && editMode ? (
+        <button className="font-medium text-lg text-center m-4 bg-blue-600 text-white rounded-lg flex items-center justify-center gap-2 w-3/12 py-2 float-right">
+          {editMode ? (
             <>
               {" "}
               <SquaresPlusIcon width={30} /> Update

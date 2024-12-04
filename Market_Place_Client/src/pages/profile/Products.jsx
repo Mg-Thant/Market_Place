@@ -4,7 +4,7 @@ import { message } from "antd";
 import { useDispatch, useSelector } from "react-redux";
 
 import { setLoading, setError } from "../../store/slices/userSlice";
-import { BeatLoader } from "react-spinners";
+import "ldrs/bouncy";
 
 const Products = ({
   products,
@@ -16,6 +16,7 @@ const Products = ({
 }) => {
   const dispatch = useDispatch();
   const loading = useSelector((state) => state.reducer.user.loading);
+  let isRequestInProgress = false;
 
   const handleOnClick = (id) => {
     setEditMode(true);
@@ -24,11 +25,20 @@ const Products = ({
     setManageTabKey("1");
   };
 
-  const handleUpload = (id) => {
-    setEditMode(true);
-    setActiveTabKey("2");
-    setEditProductId(id);
-    setManageTabKey("2");
+  const handleUpload = async (id) => {
+    if (isRequestInProgress) return;
+
+    isRequestInProgress = true;
+    try {
+      setEditMode(true);
+      setActiveTabKey("2");
+      setEditProductId(id);
+      setManageTabKey("2");
+    } catch (error) {
+      console.error("Upload Error:", error);
+    } finally {
+      isRequestInProgress = false;
+    }
   };
 
   const handleDelete = async (id) => {
@@ -104,12 +114,11 @@ const Products = ({
                     <td className="px-6 py-4 text-center">
                       {loading ? (
                         <div className="w-fit h-fit mx-auto">
-                          <BeatLoader
-                            color={"#0000ff"}
-                            loading={loading}
-                            size={7}
-                            speedMultiplier={1}
-                          />
+                          <l-bouncy
+                            size="45"
+                            speed="1.75"
+                            color="blue"
+                          ></l-bouncy>
                         </div>
                       ) : (
                         <>
@@ -119,6 +128,7 @@ const Products = ({
                             onClick={() => {
                               handleUpload(product._id);
                             }}
+                            disabled={loading}
                           >
                             Upload
                           </button>

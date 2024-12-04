@@ -1,20 +1,15 @@
 import { XCircleIcon } from "@heroicons/react/24/solid";
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import { message } from "antd";
-import { useDispatch, useSelector } from "react-redux";
 
-import { setError, setLoading } from "../../store/slices/userSlice";
 import { getProductImages, UploadProductImages } from "../../apicalls/product";
 import SavedImages from "./SavedImages";
-import { BeatLoader } from "react-spinners";
 
 const Upload = ({ editProductId, setActiveTabKey }) => {
   const [previewImages, setPreviewImages] = useState([]);
   const [images, setImages] = useState([]);
   const [savedImages, setSavedImages] = useState([]);
   const [selectedImagesCount, setSelectedImagesCount] = useState(0);
-  const dispatch = useDispatch();
-  const loading = useSelector((state) => state.reducer.user.loading);
 
   const handleOnChange = (e) => {
     setImages((prevImg) => [...prevImg, ...e.target.files]);
@@ -40,8 +35,6 @@ const Upload = ({ editProductId, setActiveTabKey }) => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    dispatch(setLoading(true));
-
     if (selectedImagesCount >= 2) {
       const formData = new FormData();
       for (let i = 0; i < images.length; i++) {
@@ -57,35 +50,33 @@ const Upload = ({ editProductId, setActiveTabKey }) => {
           throw new Error(res.message);
         }
       } catch (err) {
-        dispatch(setError(err.message));
         message.error(err.message);
       }
     } else {
       message.error("Products images must be uploaded two photos!!!");
     }
-    dispatch(setLoading(false));
   };
 
-  const getImages = async (id) => {
-    dispatch(setLoading(true));
-    try {
-      const res = await getProductImages(id);
-      if (res.isSuccess) {
-        message.success(res.message);
-        setSavedImages(res.product.images);
-      } else {
-        throw new Error(res.message);
+  const getImages = useCallback(
+    async (id) => {
+      try {
+        const res = await getProductImages(id);
+        if (res.isSuccess) {
+          message.success(res.message);
+          setSavedImages(res.product.images);
+        } else {
+          throw new Error(res.message);
+        }
+      } catch (err) {
+        message.error(err.message);
       }
-    } catch (err) {
-      dispatch(setError(err.message));
-      message.error(err.message);
-    }
-    dispatch(setLoading(false));
-  };
+    },
+    [setSavedImages]
+  );
 
   useEffect(() => {
     getImages(editProductId);
-  }, []);
+  }, [getImages, editProductId]);
 
   return (
     <div>
@@ -149,17 +140,8 @@ const Upload = ({ editProductId, setActiveTabKey }) => {
             })}
         </div>
         {selectedImagesCount > 1 && (
-          <button className="block my-4 text-white bg-blue-600 rounded-md px-3 py-2 font-medium" disabled={loading}>
-            {loading ? (
-              <BeatLoader
-                color={"#ffffff"}
-                loading={loading}
-                size={7}
-                speedMultiplier={1}
-              />
-            ) : (
-              "Upload"
-            )}
+          <button className="block my-4 text-white bg-blue-600 rounded-md px-3 py-2 font-medium">
+            Upload
           </button>
         )}
       </form>

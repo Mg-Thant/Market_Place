@@ -5,7 +5,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { setLoading } from "../../store/slices/userSlice";
 import { getSavedProducts } from "../../apicalls/product";
 import Card from "../../components/Homepage/Card";
-import { FadeLoader } from "react-spinners";
+import "ldrs/bouncy";
 
 const Index = () => {
   const [savedProducts, setSavedProducts] = useState([]);
@@ -37,13 +37,9 @@ const Index = () => {
       </h1>
       <div className="flex items-center justify-center gap-4 flex-wrap">
         {loading ? (
-          <FadeLoader
-            color={"#0000ff"}
-            loading={loading}
-            size={15}
-            speedMultiplier={1}
-            className="mx-auto mt-44"
-          />
+          <div className="mx-auto w-fit m-16">
+            <l-bouncy size="45" speed="1.75" color="blue"></l-bouncy>
+          </div>
         ) : (
           <>
             {savedProducts && savedProducts.length > 0 && (
@@ -52,13 +48,13 @@ const Index = () => {
                   return (
                     <div key={product._id} className="w-96">
                       {loading ? (
-                        <FadeLoader
-                          color={"#0000ff"}
-                          loading={loading}
-                          size={15}
-                          speedMultiplier={1}
-                          className="mx-auto mt-44"
-                        />
+                        <div className="mx-auto w-fit m-16">
+                          <l-bouncy
+                            size="45"
+                            speed="1.75"
+                            color="blue"
+                          ></l-bouncy>
+                        </div>
                       ) : (
                         <Card
                           product={product.product_id}
@@ -71,7 +67,9 @@ const Index = () => {
                 })}
               </>
             )}
-            {savedProducts.length === 0 && <p className="font-medium text-red-600">No saved products!!!</p>}
+            {savedProducts.length === 0 && (
+              <p className="font-medium text-red-600">No saved products!!!</p>
+            )}
           </>
         )}
       </div>

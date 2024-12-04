@@ -3,6 +3,7 @@ import { Link, useNavigate, useParams } from "react-router-dom";
 import { Form, Input, message } from "antd";
 import { useDispatch, useSelector } from "react-redux";
 import { BeatLoader, FadeLoader } from "react-spinners";
+import "ldrs/bouncy";
 import { ArrowLeftIcon } from "@heroicons/react/24/outline";
 
 import { getProductDetails } from "../../apicalls/public";
@@ -93,13 +94,7 @@ const Details = () => {
   return (
     <section className="flex items-center justify-between mt-[40px]">
       {loading ? (
-        <FadeLoader
-          color={"#0000ff"}
-          loading={loading}
-          size={15}
-          speedMultiplier={1}
-          className="mx-auto mt-44"
-        />
+        <l-bouncy size="45" speed="1.75" color="black"></l-bouncy>
       ) : (
         <>
           {product && product.category && product.seller && (
@@ -257,12 +252,11 @@ const Details = () => {
                       </Form.Item>
                       <button className="text-white font-medium text-base p-2 rounded-md bg-blue-600 w-full">
                         {processing ? (
-                          <BeatLoader
-                            color={"#ffffff"}
-                            loading={loading}
-                            size={7}
-                            speedMultiplier={1}
-                          />
+                          <l-bouncy
+                            size="45"
+                            speed="1.75"
+                            color="black"
+                          ></l-bouncy>
                         ) : (
                           "Submit"
                         )}

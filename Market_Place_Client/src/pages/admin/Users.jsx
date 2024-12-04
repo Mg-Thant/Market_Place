@@ -4,7 +4,6 @@ import { handleUserStatus } from "../../apicalls/admin";
 import moment from "moment";
 
 const Users = ({ users, getUsers }) => {
-  
   useEffect(() => {
     getUsers();
   }, []);
@@ -111,40 +110,29 @@ const Users = ({ users, getUsers }) => {
                       {moment(user.createdAt).format("L")}
                     </td>
                     <td className="px-6 py-4 text-center">
-                      {false ? (
-                        <div className="w-fit h-fit mx-auto">
-                          <BeatLoader
-                            color={"#0000ff"}
-                            loading={loading}
-                            size={7}
-                            speedMultiplier={1}
-                          />
-                        </div>
-                      ) : (
-                        <>
-                          {user.status === "active" ? (
-                            <button
-                              type="button"
-                              className="font-medium bg-red-600 text-white py-1 px-2 me-2 rounded-md hover:underline"
-                              onClick={() => {
-                                handleBan(user._id, "ban");
-                              }}
-                            >
-                              Ban
-                            </button>
-                          ) : (
-                            <button
-                              type="button"
-                              className="font-medium bg-green-700 text-white py-1 px-2 me-2 rounded-md hover:underline"
-                              onClick={() => {
-                                handleUnban(user._id, "unban");
-                              }}
-                            >
-                              Unban
-                            </button>
-                          )}
-                        </>
-                      )}
+                      <>
+                        {user.status === "active" ? (
+                          <button
+                            type="button"
+                            className="font-medium bg-red-600 text-white py-1 px-2 me-2 rounded-md hover:underline"
+                            onClick={() => {
+                              handleBan(user._id, "ban");
+                            }}
+                          >
+                            Ban
+                          </button>
+                        ) : (
+                          <button
+                            type="button"
+                            className="font-medium bg-green-700 text-white py-1 px-2 me-2 rounded-md hover:underline"
+                            onClick={() => {
+                              handleUnban(user._id, "unban");
+                            }}
+                          >
+                            Unban
+                          </button>
+                        )}
+                      </>
                     </td>
                   </tr>
                 ))}

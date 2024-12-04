@@ -3,10 +3,10 @@ import Hero from "../../components/Homepage/Hero";
 import Filter from "../../components/Homepage/Filter";
 import Card from "../../components/Homepage/Card";
 import { getProducts } from "../../apicalls/public";
-import { message, Pagination, TimePicker } from "antd";
+import { message, Pagination } from "antd";
 import { useDispatch, useSelector } from "react-redux";
 import { setLoading } from "../../store/slices/userSlice";
-import { FadeLoader } from "react-spinners";
+import "ldrs/bouncy";
 import { getSavedProducts } from "../../apicalls/product";
 
 const Index = () => {
@@ -86,13 +86,9 @@ const Index = () => {
         setShowPagination={setShowPagination}
       />
       {loading ? (
-        <FadeLoader
-          color={"#0000ff"}
-          loading={loading}
-          size={15}
-          speedMultiplier={1}
-          className="mx-auto mt-44"
-        />
+        <div className="mx-auto w-fit m-16">
+          <l-bouncy size="45" speed="1.75" color="blue"></l-bouncy>
+        </div>
       ) : (
         <>
           <div className="max-w-7xl mx-auto grid grid-cols-3 gap-4 mb-8">
@@ -109,12 +105,12 @@ const Index = () => {
                 ))}
               </>
             )}
-            {!products && !success && (
-              <p className="text-center text-black font-bold text-3xl mx-auto mt-4">
-                "{productSearch} is not found!!!"
-              </p>
-            )}
           </div>
+          {!products && !success && (
+            <p className="text-center text-black font-bold text-3xl mx-auto mt-4">
+              "{productSearch} is not found!!!"
+            </p>
+          )}
           {showPagination && (
             <div className="flex mt-4 mb-20 justify-end max-w-7xl mx-auto">
               <Pagination

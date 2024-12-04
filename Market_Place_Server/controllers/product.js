@@ -180,43 +180,80 @@ exports.deleteProduct = async (req, res, next) => {
 exports.uploadProductImages = async (req, res, next) => {
   const images = req.files;
   const { product_id } = req.body;
-  let secureUrlArray = [];
+  const secureUrlArray = [];
 
   const product = await Product.findOne({ _id: product_id });
 
   if (req.userId.toString() !== product.seller.toString()) {
-    throw new Error("Authorization Failed!!!");
+    return res.status(403).json({ isSuccess: false, message: "Authorization Failed!!!" });
   }
 
   try {
-    images.forEach((img) => {
-      cloudinary.uploader.upload(img.path, async (err, result) => {
-        if (!err) {
-          const secureUrl = result.secure_url;
-          secureUrlArray.push(secureUrl);
+    // Use Promise.all to upload all images concurrently
+    const uploadPromises = images.map((img) =>
+      cloudinary.uploader.upload(img.path).then((result) => result.secure_url)
+    );
 
-          if (images.length === secureUrlArray.length) {
-            await Product.findByIdAndUpdate(product_id, {
-              $push: { images: secureUrlArray },
-            });
-            return res.status(200).json({
-              isSuccess: true,
-              message: "Product image uploaded!!!",
-              secureUrlArray,
-            });
-          }
-        } else {
-          throw new Error("Cloud Upload Failed!!!");
-        }
-      });
+    const uploadedUrls = await Promise.all(uploadPromises);
+
+    // Update the product with uploaded image URLs
+    await Product.findByIdAndUpdate(product_id, {
+      $push: { images: uploadedUrls },
+    });
+
+    return res.status(200).json({
+      isSuccess: true,
+      message: "Product image uploaded!!!",
+      secureUrlArray: uploadedUrls,
     });
   } catch (err) {
-    return res.status(404).json({
+    return res.status(500).json({
       isSuccess: false,
-      message: err.message,
+      message: "Cloud Upload Failed: " + err.message,
     });
   }
 };
+
+// exports.uploadProductImages = async (req, res, next) => {
+//   const images = req.files;
+//   const { product_id } = req.body;
+//   let secureUrlArray = [];
+
+//   const product = await Product.findOne({ _id: product_id });
+
+//   if (req.userId.toString() !== product.seller.toString()) {
+//     throw new Error("Authorization Failed!!!");
+//   }
+
+//   try {
+//     images.forEach((img) => {
+//       cloudinary.uploader.upload(img.path, async (err, result) => {
+//         if (!err) {
+//           const secureUrl = result.secure_url;
+//           secureUrlArray.push(secureUrl);
+
+//           if (images.length === secureUrlArray.length) {
+//             await Product.findByIdAndUpdate(product_id, {
+//               $push: { images: secureUrlArray },
+//             });
+//             return res.status(200).json({
+//               isSuccess: true,
+//               message: "Product image uploaded!!!",
+//               secureUrlArray,
+//             });
+//           }
+//         } else {
+//           throw new Error("Cloud Upload Failed!!!");
+//         }
+//       });
+//     });
+//   } catch (err) {
+//     return res.status(404).json({
+//       isSuccess: false,
+//       message: err.message,
+//     });
+//   }
+// };
 
 exports.getProductImage = async (req, res, next) => {
   const { id } = req.params;
