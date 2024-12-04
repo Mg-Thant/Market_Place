@@ -141,7 +141,7 @@ const Index = () => {
   return (
     <>
       {loading ? (
-        <div className="mx-auto w-fit m-16">
+        <div className="mx-auto w-fit my-64">
           <l-bouncy size="45" speed="1.75" color="blue"></l-bouncy>
         </div>
       ) : (

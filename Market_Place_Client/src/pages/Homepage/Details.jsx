@@ -94,7 +94,9 @@ const Details = () => {
   return (
     <section className="flex items-center justify-between mt-[40px]">
       {loading ? (
-        <l-bouncy size="45" speed="1.75" color="black"></l-bouncy>
+        <div className="w-fit h-fit mx-auto my-64">
+          <l-bouncy size="45" speed="1.75" color="blue"></l-bouncy>
+        </div>
       ) : (
         <>
           {product && product.category && product.seller && (

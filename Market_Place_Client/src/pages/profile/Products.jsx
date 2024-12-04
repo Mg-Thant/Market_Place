@@ -113,7 +113,7 @@ const Products = ({
                     </td>
                     <td className="px-6 py-4 text-center">
                       {loading ? (
-                        <div className="w-fit h-fit mx-auto">
+                        <div className="w-fit h-fit mx-auto my-64">
                           <l-bouncy
                             size="45"
                             speed="1.75"

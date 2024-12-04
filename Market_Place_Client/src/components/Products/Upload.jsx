@@ -1,6 +1,7 @@
 import { XCircleIcon } from "@heroicons/react/24/solid";
 import React, { useCallback, useEffect, useState } from "react";
 import { message } from "antd";
+import "ldrs/bouncy";
 
 import { getProductImages, UploadProductImages } from "../../apicalls/product";
 import SavedImages from "./SavedImages";
@@ -10,6 +11,8 @@ const Upload = ({ editProductId, setActiveTabKey }) => {
   const [images, setImages] = useState([]);
   const [savedImages, setSavedImages] = useState([]);
   const [selectedImagesCount, setSelectedImagesCount] = useState(0);
+  const [savedMode, setSavedMode] = useState(false);
+  const [loading, setLoading] = useState(false);
 
   const handleOnChange = (e) => {
     setImages((prevImg) => [...prevImg, ...e.target.files]);
@@ -35,26 +38,33 @@ const Upload = ({ editProductId, setActiveTabKey }) => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if (selectedImagesCount >= 2) {
-      const formData = new FormData();
-      for (let i = 0; i < images.length; i++) {
-        formData.append("product_images", images[i]);
-      }
-      formData.append("product_id", editProductId);
-      try {
-        const res = await UploadProductImages(formData);
-        if (res.message) {
-          message.success(res.message);
-          setActiveTabKey("1");
-        } else {
-          throw new Error(res.message);
-        }
-      } catch (err) {
-        message.error(err.message);
-      }
+    setLoading(true);
+    if (savedMode) {
+      setActiveTabKey("1");
+      message.success("Product image has saved");
     } else {
-      message.error("Products images must be uploaded two photos!!!");
+      if (selectedImagesCount >= 2) {
+        const formData = new FormData();
+        for (let i = 0; i < images.length; i++) {
+          formData.append("product_images", images[i]);
+        }
+        formData.append("product_id", editProductId);
+        try {
+          const res = await UploadProductImages(formData);
+          if (res.message) {
+            message.success(res.message);
+            setActiveTabKey("1");
+          } else {
+            throw new Error(res.message);
+          }
+        } catch (err) {
+          message.error(err.message);
+        }
+      } else {
+        message.error("Products images must be uploaded two photos!!!");
+      }
     }
+    setLoading(false);
   };
 
   const getImages = useCallback(
@@ -139,9 +149,30 @@ const Upload = ({ editProductId, setActiveTabKey }) => {
               );
             })}
         </div>
+        {savedImages.length > 0 && selectedImagesCount < 1 && (
+          <button
+            className="block my-4 text-white bg-blue-600 rounded-md px-3 py-2 font-medium"
+            disabled={loading}
+            onClick={() => setSavedMode(true)}
+          >
+            {loading ? (
+              <l-bouncy size="30" speed="1.75" color="white"></l-bouncy>
+            ) : (
+              "Save"
+            )}
+          </button>
+        )}
         {selectedImagesCount > 1 && (
-          <button className="block my-4 text-white bg-blue-600 rounded-md px-3 py-2 font-medium">
-            Upload
+          <button
+            className="block my-4 text-white bg-blue-600 rounded-md px-3 py-2 font-medium"
+            disabled={loading}
+            onClick={() => setSavedMode(false)}
+          >
+            {loading ? (
+              <l-bouncy size="30" speed="1.75" color="white"></l-bouncy>
+            ) : (
+              "Upload"
+            )}
           </button>
         )}
       </form>

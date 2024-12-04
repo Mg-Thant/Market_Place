@@ -37,7 +37,7 @@ const Index = () => {
       </h1>
       <div className="flex items-center justify-center gap-4 flex-wrap">
         {loading ? (
-          <div className="mx-auto w-fit m-16">
+          <div className="mx-auto w-fit my-64">
             <l-bouncy size="45" speed="1.75" color="blue"></l-bouncy>
           </div>
         ) : (
@@ -48,7 +48,7 @@ const Index = () => {
                   return (
                     <div key={product._id} className="w-96">
                       {loading ? (
-                        <div className="mx-auto w-fit m-16">
+                        <div className="mx-auto w-fit my-64">
                           <l-bouncy
                             size="45"
                             speed="1.75"
