@@ -1,12 +1,16 @@
 import React from "react";
 import { BookmarkIcon, BookmarkSlashIcon } from "@heroicons/react/24/outline";
 import { BookmarkIcon as Bookmark } from "@heroicons/react/24/solid";
-import { useSelector } from "react-redux";
-
-import TradeHub from "../../images/TradeHub.jpg";
+import { useDispatch, useSelector } from "react-redux";
 import { Link } from "react-router-dom";
 import { message } from "antd";
+
+import TradeHub from "../../images/TradeHub.jpg";
 import { savedProducts, unSavedProduct } from "../../apicalls/product";
+import {
+  addSavedProduct,
+  removeSavedProduct,
+} from "../../store/slices/userSlice";
 
 const Card = ({
   product,
@@ -16,6 +20,13 @@ const Card = ({
   getAllProduct,
 }) => {
   const { user } = useSelector((state) => state.reducer.user);
+  const dispatch = useDispatch();
+  const isSavedProduct = useSelector(
+    (state) => state.reducer.user.isSavedProduct
+  );
+
+  const isProductSaved =
+    !saved && saveProducts.some((p) => p.product_id._id === product._id);
 
   const handleProductStatus = async (id) => {
     try {
@@ -27,8 +38,10 @@ const Card = ({
       }
       if (res.isSuccess) {
         if (saved) {
+          dispatch(removeSavedProduct(id));
           savedProduct();
         } else {
+          dispatch(addSavedProduct(id));
           getAllProduct();
         }
         message.success(res.message);
@@ -36,12 +49,8 @@ const Card = ({
         throw new Error(res.message);
       }
     } catch (err) {
-      message.error(err.message || "Product has been saved!!!");
+      message.error(err.message || "Product already saved!!!");
     }
-  };
-
-  const isSavedProducts = (product) => {
-    return saveProducts.some((p) => p.product_id._id === product._id);
   };
 
   return (
@@ -79,14 +88,14 @@ const Card = ({
               />
             ) : (
               <>
-                {isSavedProducts(product) ? (
+                {isProductSaved ||
+                (isSavedProduct.length > 0 &&
+                  isSavedProduct.includes(product._id)) ? (
                   <Bookmark
                     width={20}
                     height={30}
                     className="text-blue-600 cursor-pointer"
-                    onClick={() => {
-                      return message.warning("Product has been saved!!!");
-                    }}
+                    onClick={() => message.warning("Product has been saved!!!")}
                   />
                 ) : (
                   <BookmarkIcon
@@ -108,7 +117,7 @@ const Card = ({
       </p>
       <hr />
       <p className="ftext-lg font-semibold my-2 text-left">${product.price}</p>
-      {product && product.seller && (
+      {product?.seller && (
         <p className="text-left">
           <span className="font-bold">Seller</span>: {product.seller.username}
         </p>

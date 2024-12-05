@@ -37,7 +37,7 @@ const AuthForm = ({ isLogin }) => {
           dispatch(setError(null));
           navigate("/login");
         } else {
-          throw new Error(res.message);
+          throw new Error(res.message.msg);
         }
       } catch (err) {
         message.error(err.message);

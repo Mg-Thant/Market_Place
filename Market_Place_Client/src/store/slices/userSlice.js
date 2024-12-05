@@ -4,6 +4,7 @@ const initialState = {
   user: null,
   loading: false,
   error: null,
+  isSavedProduct: []
 };
 
 export const userSlice = createSlice({
@@ -22,9 +23,23 @@ export const userSlice = createSlice({
       state.error = action.payload;
       state.loading = false;
     },
+    addSavedProduct: (state, action) => {
+      state.isSavedProduct.push(action.payload);
+    },
+    removeSavedProduct: (state, action) => {
+      state.isSavedProduct = state.isSavedProduct.filter(
+        (productId) => productId !== action.payload
+      );
+    }
   },
 });
 
-export const { setUser, setLoading, setError } = userSlice.actions;
+export const {
+  setUser,
+  setLoading,
+  setError,
+  addSavedProduct,
+  removeSavedProduct,
+} = userSlice.actions;
 
 export default userSlice.reducer;

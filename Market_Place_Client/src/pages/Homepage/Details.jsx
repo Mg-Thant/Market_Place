@@ -255,9 +255,9 @@ const Details = () => {
                       <button className="text-white font-medium text-base p-2 rounded-md bg-blue-600 w-full">
                         {processing ? (
                           <l-bouncy
-                            size="45"
+                            size="25"
                             speed="1.75"
-                            color="black"
+                            color="blue"
                           ></l-bouncy>
                         ) : (
                           "Submit"

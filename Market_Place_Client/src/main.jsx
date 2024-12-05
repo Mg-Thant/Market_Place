@@ -14,6 +14,10 @@ if (import.meta.env.VITE_MODE === "production") {
 }
 const persistor = persistStore(store);
 
+persistor.purge().then(() => {
+  console.log("State purged!");
+});
+
 createRoot(document.getElementById("root")).render(
   <StrictMode>
     <Provider store={store}>
